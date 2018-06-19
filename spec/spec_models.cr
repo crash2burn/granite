@@ -95,6 +95,13 @@ require "uuid"
       field created_at : Time
     end
 
+    class HasBytes < Granite::Base
+      adapter {{ adapter_literal }}
+      table_name has_bytes
+      field bytes : Bytes
+      field name : String
+    end
+
     class Empty < Granite::Base
       adapter {{ adapter_literal }}
       table_name emptys

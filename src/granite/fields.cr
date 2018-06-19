@@ -1,7 +1,7 @@
 require "json"
 
 module Granite::Fields
-  alias Type = DB::Any | JSON::Any
+  alias Type = DB::Any | JSON::Any | Bytes
   TIME_FORMAT_REGEX = /\d{4,}-\d{2,}-\d{2,}\s\d{2,}:\d{2,}:\d{2,}/
 
   macro included
@@ -101,7 +101,7 @@ module Granite::Fields
       end
     end
 
-    def set_attributes(args : Hash(String | Symbol, Type))
+    def set_attributes(args : Hash(String | Symbol, Type | Bytes))
       args.each do |k, v|
         cast_to_field(k, v.as(Type))
       end
@@ -130,6 +130,7 @@ module Granite::Fields
             end
 
             return @{{_name.id}} = nil if value.nil?
+
             {% if type.id == Int32.id %}
               @{{_name.id}} = value.is_a?(JSON::Any) ? value.as_i : value.is_a?(String) ? value.to_i32(strict: false) : value.is_a?(Int64) ? value.to_i32 : value.as(Int32)
             {% elsif type.id == Int64.id %}
@@ -146,6 +147,8 @@ module Granite::Fields
                elsif value.to_s =~ TIME_FORMAT_REGEX
                  @{{_name.id}} = Time.parse(value.to_s, Granite::DATETIME_FORMAT)
                end
+            {% elsif type.id.stringify == "Bytes" %}
+              @{{_name.id}} = value.as(Bytes).to_slice
             {% else %}
               @{{_name.id}} = value.is_a?(JSON::Any) ? value.as_s : value.to_s
             {% end %}

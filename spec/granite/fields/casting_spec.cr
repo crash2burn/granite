@@ -6,6 +6,11 @@ module {{adapter.capitalize.id}}
       model.downvotes.should eq 32
     end
 
+    it "works with bytes" do
+      model = HasBytes.new({"bytes" => Bytes.new(3, 3)})
+      model.bytes.should eq Bytes.new(3,3)
+    end
+
     it "generates an error if casting fails" do
       model = Review.new({ "downvotes" => "" })
       model.errors.size.should eq 1
