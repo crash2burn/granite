@@ -122,13 +122,6 @@ module Granite::Fields
           {% for _name, options in FIELDS %}
             {% type = options[:type] %}
           when "{{_name.id}}"
-            if "{{_name.id}}" == "{{PRIMARY[:name]}}"
-              {% if !PRIMARY[:auto] %}
-                @{{PRIMARY[:name]}} = value.is_a?(JSON::Any) ? value.raw.as({{PRIMARY[:type]}}) : value.as({{PRIMARY[:type]}})
-              {% end %}
-              return
-            end
-
             return @{{_name.id}} = nil if value.nil?
 
             {% if type.id == Int32.id %}
